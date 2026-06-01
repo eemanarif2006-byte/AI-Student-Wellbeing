@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
-import base64
  
 st.set_page_config(
     page_title="StudyPulse · AI Student Predictor",
@@ -12,21 +11,15 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
  
-# ── CSS ────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap');
  
 html, body, [class*="css"] {
-    font-family: 'Nunito', sans-serif;
-    color: #1a1a2e;
+    font-family: 'Lato', sans-serif;
+    color: #2d2040;
 }
  
-.stApp {
-    background: transparent;
-}
- 
-/* Background image set via inline style below */
 [data-testid="stAppViewContainer"] {
     background-size: cover;
     background-position: center;
@@ -37,314 +30,279 @@ html, body, [class*="css"] {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(255,255,255,0.82);
-    backdrop-filter: blur(2px);
+    background: rgba(255,248,252,0.78);
+    backdrop-filter: blur(3px);
     z-index: 0;
 }
  
-[data-testid="stAppViewContainer"] > * {
-    position: relative;
-    z-index: 1;
-}
- 
+[data-testid="stAppViewContainer"] > * { position: relative; z-index: 1; }
 [data-testid="stHeader"] { background: transparent !important; }
+[data-testid="stToolbar"] { display: none; }
+ 
+/* ── URL INPUT ── */
+.url-wrap {
+    margin: 0 auto 0.5rem;
+    max-width: 560px;
+    text-align: center;
+}
+.url-hint {
+    font-size: 0.72rem;
+    color: #c0a8c8;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    font-family: 'Lato', sans-serif;
+}
  
 /* ── HERO ── */
 .hero-wrap {
     text-align: center;
-    padding: 3rem 1rem 1.5rem;
+    padding: 2.8rem 1rem 1.6rem;
 }
-.hero-tag {
-    display: inline-block;
-    background: #e8e0ff;
-    color: #5b3fc4;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
+.hero-eyebrow {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    padding: 0.3rem 1rem;
-    border-radius: 999px;
-    margin-bottom: 1.1rem;
+    color: #c4a0c8;
+    margin-bottom: 0.9rem;
+    font-weight: 700;
 }
 .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 6vw, 3.2rem);
-    font-weight: 800;
-    line-height: 1.1;
-    color: #16094a;
-    margin: 0 0 0.7rem;
-    letter-spacing: -0.03em;
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-size: clamp(2rem, 5.5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #2d1a40;
+    margin: 0 0 0.8rem;
+    letter-spacing: -0.01em;
 }
 .hero-title em {
-    font-style: normal;
-    background: linear-gradient(135deg, #7c5cbf, #c47fc4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-style: italic;
+    color: #9b5fc4;
 }
 .hero-sub {
-    font-size: 1rem;
-    color: #5a5a7a;
-    font-weight: 400;
-    max-width: 480px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    color: #8a7aa0;
+    font-weight: 300;
+    max-width: 440px;
     margin: 0 auto;
-    line-height: 1.6;
+    line-height: 1.7;
+}
+.hero-divider {
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, #d4a8e8, #f0c8d8);
+    margin: 1.4rem auto 0;
+    border-radius: 2px;
 }
  
 /* ── CARDS ── */
 .glass-card {
-    background: rgba(255,255,255,0.72);
-    border: 1.5px solid rgba(180,160,255,0.25);
+    background: rgba(255,250,255,0.75);
+    border: 1px solid rgba(210,180,230,0.35);
     border-radius: 20px;
-    padding: 1.6rem 1.8rem;
-    margin-bottom: 1.2rem;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 24px rgba(92,63,196,0.06);
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.1rem;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 2px 20px rgba(180,140,210,0.08);
 }
 .card-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #9b87c8;
-    margin-bottom: 1.2rem;
+    color: #c4a0c8;
+    margin-bottom: 1.1rem;
     font-weight: 700;
 }
  
-/* ── STEPPER ── */
-.stepper-row {
+/* ── STEPPER ROW ── */
+.step-row {
     display: flex;
     align-items: center;
-    gap: 0;
-    margin-bottom: 1.1rem;
+    margin-bottom: 0.85rem;
+    gap: 12px;
 }
-.stepper-label {
-    font-size: 0.88rem;
+.step-meta { flex: 1; }
+.step-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #2e2060;
-    flex: 1;
+    color: #2d1a40;
+    line-height: 1.3;
 }
-.stepper-sublabel {
-    font-size: 0.73rem;
-    color: #9b87c8;
-    font-weight: 400;
+.step-hint {
+    font-size: 0.7rem;
+    color: #c0a8c8;
+    font-weight: 300;
+    margin-top: 1px;
 }
-.stepper-controls {
+.step-ctrl {
     display: flex;
     align-items: center;
-    gap: 0;
-    background: rgba(92,63,196,0.07);
-    border-radius: 12px;
+    background: rgba(220,200,240,0.18);
+    border: 1px solid rgba(200,170,220,0.3);
+    border-radius: 10px;
     overflow: hidden;
-    border: 1.5px solid rgba(92,63,196,0.15);
 }
-.step-btn {
+.s-btn {
     background: none;
     border: none;
-    width: 36px;
-    height: 36px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #5b3fc4;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
-}
-.step-btn:hover { background: rgba(92,63,196,0.13); }
-.step-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #16094a;
-    min-width: 52px;
-    text-align: center;
-}
- 
-/* ── BG PICKER ── */
-.bg-option {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    margin: 0 6px 6px 0;
-}
-.bg-swatch {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    border: 2.5px solid transparent;
-    transition: border-color 0.2s, transform 0.15s;
-    background-size: cover;
-    background-position: center;
-}
-.bg-swatch:hover { transform: scale(1.07); }
-.bg-swatch.active { border-color: #7c5cbf; }
-.bg-name {
-    font-size: 0.65rem;
-    color: #9b87c8;
+    width: 30px;
+    height: 32px;
+    font-size: 1rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    color: #9b5fc4;
+    cursor: pointer;
+    line-height: 1;
+}
+.s-btn:hover { background: rgba(180,140,210,0.15); }
+.s-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #2d1a40;
+    min-width: 46px;
+    text-align: center;
 }
  
 /* ── RESULTS ── */
-.result-grid {
+.result-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 0.5rem;
+    gap: 0.9rem;
+    margin-top: 0.4rem;
 }
-.result-box {
-    background: rgba(255,255,255,0.85);
-    border-radius: 16px;
-    padding: 1.4rem 1rem;
+.res-box {
+    background: rgba(255,252,255,0.88);
+    border-radius: 14px;
+    padding: 1rem 0.8rem;
     text-align: center;
-    border: 1.5px solid rgba(180,160,255,0.2);
+    border: 1px solid rgba(210,180,230,0.3);
 }
-.result-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
+.res-lbl {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #9b87c8;
+    color: #c4a0c8;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
 }
-.result-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.6rem;
-    font-weight: 800;
+.res-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d1a40;
     line-height: 1;
-    color: #16094a;
 }
-.burnout-high   { color: #c44a4a !important; }
-.burnout-medium { color: #c4954a !important; }
-.burnout-low    { color: #3a9e6f !important; }
+.burnout-high   { color: #c44a5a !important; }
+.burnout-medium { color: #b07020 !important; }
+.burnout-low    { color: #3a8e6a !important; }
  
-/* Badge pills */
 .pill {
     display: inline-block;
-    padding: 0.22rem 0.85rem;
+    padding: 0.18rem 0.75rem;
     border-radius: 999px;
-    font-size: 0.73rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    margin-top: 0.5rem;
-    letter-spacing: 0.04em;
+    margin-top: 0.4rem;
+    letter-spacing: 0.05em;
+    font-family: 'Lato', sans-serif;
 }
-.pill-green  { background: #e0f7ee; color: #1a7a4a; }
-.pill-yellow { background: #fff5e0; color: #8a5c00; }
-.pill-red    { background: #fce8e8; color: #9e2222; }
- 
-/* Tip rows */
-.tip-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 0.65rem 0;
-    border-bottom: 1px solid rgba(180,160,255,0.13);
-    font-size: 0.88rem;
-    color: #3a3060;
-    line-height: 1.5;
-}
-.tip-row:last-child { border-bottom: none; }
-.tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.pill-green  { background: #eaf7f0; color: #1a6e45; border: 1px solid #c0e8d4; }
+.pill-yellow { background: #fef9ec; color: #7a5000; border: 1px solid #f0dfa0; }
+.pill-red    { background: #fceef0; color: #8e2233; border: 1px solid #f0c0c8; }
  
 /* ── BUTTON ── */
 .stButton > button {
-    background: linear-gradient(135deg, #7c5cbf, #b07fd4) !important;
-    color: white !important;
+    background: linear-gradient(135deg, #c49ad8, #e8b4d0) !important;
+    color: #2d1a40 !important;
     border: none !important;
-    border-radius: 14px !important;
-    font-family: 'Syne', sans-serif !important;
-    font-size: 0.9rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.05em !important;
-    padding: 0.75rem 2rem !important;
+    border-radius: 12px !important;
+    font-family: 'Playfair Display', serif !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.03em !important;
+    padding: 0.7rem 2rem !important;
     width: 100% !important;
-    box-shadow: 0 4px 18px rgba(124,92,191,0.3) !important;
-    transition: opacity 0.2s, transform 0.15s !important;
+    box-shadow: 0 3px 14px rgba(180,140,210,0.28) !important;
+    transition: opacity 0.2s !important;
 }
-.stButton > button:hover {
-    opacity: 0.9 !important;
-    transform: translateY(-1px) !important;
+.stButton > button:hover { opacity: 0.88 !important; }
+ 
+/* number input styling */
+[data-testid="stNumberInput"] input {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 0.88rem !important;
+    color: #2d1a40 !important;
+    border-color: rgba(200,170,220,0.4) !important;
+    border-radius: 8px !important;
+    background: rgba(255,252,255,0.8) !important;
+}
+[data-testid="stNumberInput"] label {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #2d1a40 !important;
 }
  
-/* ── DIVIDER & FOOTER ── */
-hr { border-color: rgba(180,160,255,0.2) !important; }
+.stTextInput input {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 0.84rem !important;
+    border-radius: 10px !important;
+    border-color: rgba(200,170,220,0.4) !important;
+    background: rgba(255,252,255,0.8) !important;
+    color: #2d1a40 !important;
+}
+.stTextInput label { display: none; }
+ 
+hr { border-color: rgba(210,180,230,0.25) !important; }
 .footer-txt {
     text-align: center;
-    font-size: 0.72rem;
-    color: #b0a0cc;
+    font-size: 0.68rem;
+    color: #c4b0d0;
+    letter-spacing: 0.08em;
     padding-bottom: 2rem;
-}
- 
-/* Streamlit widget labels */
-.stSlider > label, .stSelectbox > label, .stNumberInput > label {
-    font-size: 0.84rem !important;
-    color: #2e2060 !important;
-    font-weight: 600 !important;
+    font-family: 'Lato', sans-serif;
+    text-transform: uppercase;
 }
  
 #MainMenu, footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
  
-# ── Background picker (Unsplash sourced via direct URL) ───────────────────────
-BG_OPTIONS = {
-    "Aurora":    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80",
-    "Bloom":     "https://images.unsplash.com/photo-1490750967868-88df5691cc6a?w=1600&q=80",
-    "Cosmos":    "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=80",
-    "Studio":    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80",
-    "Minimal":   "https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&q=80",
-    "Forest":    "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=80",
-}
+# ── Background URL input ──────────────────────────────────────────────────────
+if "bg_url" not in st.session_state:
+    st.session_state.bg_url = ""
  
-if "bg_choice" not in st.session_state:
-    st.session_state.bg_choice = "Aurora"
+st.markdown('<div class="url-wrap"><div class="url-hint">✦ Paste a background image URL (Pinterest, Unsplash, etc.)</div></div>', unsafe_allow_html=True)
+bg_url_input = st.text_input("bg", value=st.session_state.bg_url, placeholder="https://i.pinimg.com/...")
+if bg_url_input != st.session_state.bg_url:
+    st.session_state.bg_url = bg_url_input
  
-# Inject chosen background
-bg_url = BG_OPTIONS[st.session_state.bg_choice]
-st.markdown(f"""
-<style>
-[data-testid="stAppViewContainer"] {{
-    background-image: url('{bg_url}');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}}
-</style>
-""", unsafe_allow_html=True)
+if st.session_state.bg_url.strip():
+    st.markdown(f"""
+    <style>
+    [data-testid="stAppViewContainer"] {{
+        background-image: url('{st.session_state.bg_url.strip()}');
+    }}
+    </style>
+    """, unsafe_allow_html=True)
  
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-wrap">
-  <div class="hero-tag">✦ BSAI · AI130 · Semester 2</div>
+  <div class="hero-eyebrow">✦ &nbsp; BSAI · AI130 · Semester 2 &nbsp; ✦</div>
   <h1 class="hero-title">Know Your <em>Academic</em><br>Future, Now.</h1>
-  <p class="hero-sub">Enter your study habits and let our ML models predict your GPA and burnout risk — powered by 50,000 real student records.</p>
+  <p class="hero-sub">Enter your study habits and let our machine learning models predict your GPA & burnout risk — trained on 50,000 student records.</p>
+  <div class="hero-divider"></div>
 </div>
 """, unsafe_allow_html=True)
  
-# ── Background Picker ─────────────────────────────────────────────────────────
-st.markdown('<div class="glass-card"><div class="card-label">✦ Choose Your Vibe</div>', unsafe_allow_html=True)
- 
-cols = st.columns(len(BG_OPTIONS))
-for i, (name, url) in enumerate(BG_OPTIONS.items()):
-    with cols[i]:
-        active_cls = "active" if st.session_state.bg_choice == name else ""
-        if st.button(name, key=f"bg_{name}"):
-            st.session_state.bg_choice = name
-            st.rerun()
-        st.markdown(f"""
-        <div style="text-align:center; margin-top:-10px;">
-          <div class="bg-swatch {active_cls}" style="background-image:url('{url}'); margin: 0 auto;"></div>
-        </div>
-        """, unsafe_allow_html=True)
- 
-st.markdown('</div>', unsafe_allow_html=True)
- 
-# ── Load Models ───────────────────────────────────────────────────────────────
+# ── Load models ───────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_models():
     base = os.path.dirname(__file__)
@@ -363,128 +321,115 @@ def load_defaults():
 try:
     gpa_model, burnout_model, scaler = load_models()
     defaults = load_defaults()
-    models_loaded = True
+    models_ok = True
 except Exception as e:
-    models_loaded = False
-    load_error = str(e)
+    models_ok = False
+    load_err = str(e)
  
-if not models_loaded:
-    st.error(f"Could not load models. Ensure gpa_model.pkl, burnout_model.pkl, scaler.pkl and cleaned_students_data.csv are in the same folder.\n\n{load_error}")
+if not models_ok:
+    st.error(f"Could not load models: {load_err}")
     st.stop()
  
-# ── Stepper helper ────────────────────────────────────────────────────────────
-def stepper(label, sublabel, key, min_val, max_val, step, default, fmt="{:.2f}"):
+# ── Stepper + number_input combo ─────────────────────────────────────────────
+def field(label, hint, key, mn, mx, step, default):
     if key not in st.session_state:
         st.session_state[key] = float(default)
  
-    col_label, col_minus, col_val, col_plus = st.columns([3, 0.5, 0.8, 0.5])
+    # Label + hint
+    st.markdown(f"""
+    <div class="step-row" style="margin-bottom:4px;">
+      <div class="step-meta">
+        <div class="step-name">{label}</div>
+        <div class="step-hint">{hint}</div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
  
-    with col_label:
-        st.markdown(f'<div class="stepper-label">{label}<br><span class="stepper-sublabel">{sublabel}</span></div>', unsafe_allow_html=True)
-    with col_minus:
-        if st.button("−", key=f"{key}_minus"):
-            st.session_state[key] = max(min_val, round(st.session_state[key] - step, 10))
-    with col_val:
-        display = fmt.format(st.session_state[key]) if isinstance(fmt, str) else str(int(st.session_state[key]))
-        st.markdown(f'<div class="step-val" style="padding:6px 0; text-align:center;">{display}</div>', unsafe_allow_html=True)
-    with col_plus:
-        if st.button("+", key=f"{key}_plus"):
-            st.session_state[key] = min(max_val, round(st.session_state[key] + step, 10))
+    col_m, col_n, col_p = st.columns([0.12, 0.76, 0.12])
+    with col_m:
+        if st.button("−", key=f"{key}_m"):
+            st.session_state[key] = round(max(mn, st.session_state[key] - step), 4)
+    with col_n:
+        val = st.number_input(
+            label, label_visibility="collapsed",
+            min_value=float(mn), max_value=float(mx),
+            value=float(st.session_state[key]),
+            step=float(step), key=f"{key}_num",
+            format="%.2f" if step < 1 else "%.0f",
+        )
+        st.session_state[key] = val
+    with col_p:
+        if st.button("+", key=f"{key}_p"):
+            st.session_state[key] = round(min(mx, st.session_state[key] + step), 4)
  
+    st.markdown("<div style='margin-bottom:0.5rem;'></div>", unsafe_allow_html=True)
     return st.session_state[key]
  
-# ── Inputs ────────────────────────────────────────────────────────────────────
+# ── Input card ────────────────────────────────────────────────────────────────
 st.markdown('<div class="glass-card"><div class="card-label">✦ Your Student Profile</div>', unsafe_allow_html=True)
  
-pre_gpa        = stepper("Pre-Semester GPA",         "Scale: 0.0 – 4.0",         "pre_gpa",    0.0, 4.0,  0.1,  round(defaults.get("Pre_Semester_GPA", 2.5), 1))
-weekly_ai      = stepper("Weekly GenAI Hours",        "Hours/week using AI tools", "weekly_ai",  0.0, 40.0, 0.5,  round(defaults.get("Weekly_GenAI_Hours", 5.0), 1))
-trad_hrs       = stepper("Traditional Study Hours",   "Hours/week without AI",     "trad_hrs",   0.0, 60.0, 0.5,  round(defaults.get("Traditional_Study_Hours", 15.0), 1))
-anxiety        = stepper("Exam Anxiety Level",        "1 = calm · 10 = very high", "anxiety",    1,   10,   1,    int(round(defaults.get("Anxiety_Level_During_Exams", 5))), fmt="{:.0f}")
-skill_ret      = stepper("Skill Retention Score",     "0 = poor · 100 = excellent","skill_ret",  0.0, 100.0,1.0,  round(defaults.get("Skill_Retention_Score", 60.0), 1))
+pre_gpa   = field("Pre-Semester GPA",          "0.0 – 4.0",                "pre_gpa",  0.0,  4.0,  0.1, round(defaults.get("Pre_Semester_GPA", 2.5), 1))
+weekly_ai = field("Weekly GenAI Hours",         "Hours/week using AI tools","weekly_ai",0.0, 40.0,  0.5, round(defaults.get("Weekly_GenAI_Hours", 5.0), 1))
+trad_hrs  = field("Traditional Study Hours",    "Hours/week without AI",    "trad_hrs", 0.0, 60.0,  0.5, round(defaults.get("Traditional_Study_Hours", 15.0), 1))
+anxiety   = field("Exam Anxiety Level",         "1 = calm · 10 = extreme",  "anxiety",  1.0, 10.0,  1.0, float(int(round(defaults.get("Anxiety_Level_During_Exams", 5)))))
+skill_ret = field("Skill Retention Score",      "0 = poor · 100 = great",   "skill_ret",0.0,100.0,  1.0, round(defaults.get("Skill_Retention_Score", 60.0), 1))
  
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
  
 # ── Predict ───────────────────────────────────────────────────────────────────
 BURNOUT_LABELS = {0: "High", 1: "Low", 2: "Medium"}
 BURNOUT_COLOR  = {"High": "burnout-high", "Medium": "burnout-medium", "Low": "burnout-low"}
 BURNOUT_PILL   = {"High": "pill-red",     "Medium": "pill-yellow",    "Low": "pill-green"}
-BURNOUT_EMOJI  = {"High": "🔴",           "Medium": "🟡",             "Low": "🟢"}
+BURNOUT_EMOJI  = {"High": "↑ High",       "Medium": "~ Medium",       "Low": "↓ Low"}
  
-predict = st.button("✦ Predict My GPA & Burnout Risk")
+if st.button("✦ Predict My GPA & Burnout Risk"):
+    inp = dict(defaults)
+    inp.pop("Post_Semester_GPA", None)
+    inp.pop("Burnout_Risk_Level", None)
+    inp["Pre_Semester_GPA"]           = pre_gpa
+    inp["Weekly_GenAI_Hours"]          = weekly_ai
+    inp["Traditional_Study_Hours"]     = trad_hrs
+    inp["Anxiety_Level_During_Exams"]  = float(anxiety)
+    inp["Skill_Retention_Score"]       = skill_ret
  
-if predict:
-    input_dict = dict(defaults)
-    input_dict.pop("Post_Semester_GPA", None)
-    input_dict.pop("Burnout_Risk_Level", None)
-    input_dict["Pre_Semester_GPA"]          = pre_gpa
-    input_dict["Weekly_GenAI_Hours"]         = weekly_ai
-    input_dict["Traditional_Study_Hours"]    = trad_hrs
-    input_dict["Anxiety_Level_During_Exams"] = float(anxiety)
-    input_dict["Skill_Retention_Score"]      = skill_ret
+    df_in = pd.DataFrame([inp])
  
-    input_df = pd.DataFrame([input_dict])
+    pred_gpa     = gpa_model.predict(df_in)[0]
+    burnout_code = int(burnout_model.predict(df_in)[0])
+    b_label      = BURNOUT_LABELS[burnout_code]
+    b_color      = BURNOUT_COLOR[b_label]
+    b_pill       = BURNOUT_PILL[b_label]
+    b_emoji      = BURNOUT_EMOJI[b_label]
  
-    predicted_gpa = gpa_model.predict(input_df)[0]
-    burnout_code  = int(burnout_model.predict(input_df)[0])
-    burnout_label = BURNOUT_LABELS[burnout_code]
- 
-    b_color = BURNOUT_COLOR[burnout_label]
-    b_pill  = BURNOUT_PILL[burnout_label]
-    b_emoji = BURNOUT_EMOJI[burnout_label]
- 
-    if predicted_gpa >= 3.5:
-        g_pill, g_txt = "pill-green", "Excellent 🎉"
-    elif predicted_gpa >= 2.5:
-        g_pill, g_txt = "pill-yellow", "On Track 📈"
+    if pred_gpa >= 3.5:
+        g_pill, g_txt = "pill-green",  "Excellent"
+    elif pred_gpa >= 2.5:
+        g_pill, g_txt = "pill-yellow", "On Track"
     else:
-        g_pill, g_txt = "pill-red", "Needs Attention ⚠️"
+        g_pill, g_txt = "pill-red",    "Needs Attention"
  
     st.markdown(f"""
-    <div class="glass-card">
-      <div class="card-label">✦ Your Results</div>
-      <div class="result-grid">
-        <div class="result-box">
-          <div class="result-label">Predicted GPA</div>
-          <div class="result-value">{predicted_gpa:.2f}</div>
+    <div class="glass-card" style="margin-top:0.3rem;">
+      <div class="card-label">✦ Results</div>
+      <div class="result-row">
+        <div class="res-box">
+          <div class="res-lbl">Predicted GPA</div>
+          <div class="res-val">{pred_gpa:.2f}</div>
           <span class="pill {g_pill}">{g_txt}</span>
         </div>
-        <div class="result-box">
-          <div class="result-label">Burnout Risk</div>
-          <div class="result-value {b_color}">{burnout_label}</div>
-          <span class="pill {b_pill}">{b_emoji} {burnout_label} Risk</span>
+        <div class="res-box">
+          <div class="res-lbl">Burnout Risk</div>
+          <div class="res-val {b_color}">{b_label}</div>
+          <span class="pill {b_pill}">{b_emoji}</span>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
  
-    # Tips
-    tips = []
-    if anxiety >= 7:
-        tips.append(("🧘", "Your anxiety is high — try structured exam prep and mindfulness to stay grounded."))
-    if weekly_ai > 20:
-        tips.append(("🤖", "Heavy GenAI usage detected — make sure you're building real skills, not just shortcuts."))
-    if trad_hrs < 10:
-        tips.append(("📚", "Low traditional study hours — balancing AI with deep reading improves retention a lot."))
-    if skill_ret < 50:
-        tips.append(("🔁", "Low skill retention — try active recall and spaced repetition to lock in what you learn."))
-    if predicted_gpa < 2.5:
-        tips.append(("📈", "GPA projection is below average — consider reaching out to your academic advisor early."))
-    if burnout_label == "High":
-        tips.append(("💆", "High burnout risk — rest is productive too. Schedule breaks and protect your sleep."))
-    if not tips:
-        tips.append(("✅", "You're on a great track! Keep balancing AI tools with active learning and self-care."))
- 
-    st.markdown('<div class="glass-card"><div class="card-label">✦ Personal Insights</div>', unsafe_allow_html=True)
-    for icon, text in tips:
-        st.markdown(f'<div class="tip-row"><span class="tip-icon">{icon}</span><span>{text}</span></div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
- 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown(
-    '<p class="footer-txt">StudyPulse · BSAI Semester 2 · AI130 Programming for AI<br>'
-    'Zainab Qasim · Eeman Arif · Khizran Fatima</p>',
+    '<p class="footer-txt">StudyPulse &nbsp;·&nbsp; BSAI Semester 2 &nbsp;·&nbsp; AI130 Programming for AI<br>'
+    'Zainab Qasim &nbsp;·&nbsp; Eeman Arif &nbsp;·&nbsp; Khizran Fatima</p>',
     unsafe_allow_html=True,
 )
- 
-
