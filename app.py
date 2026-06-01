@@ -56,9 +56,11 @@ html, body, [class*="css"] {{
 
 /* ── HERO ── */
 .hero {{
-    text-align: center;
-    padding-bottom: 1.6rem;
+    background: rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 1.3rem;
 }}
+
 .hero-tag {{
     display: inline-block;
     font-size: 0.62rem;
@@ -99,6 +101,14 @@ html, body, [class*="css"] {{
     background: linear-gradient(90deg, #c89858, #e8be88);
     margin: 1.3rem auto 0;
     border-radius: 2px;
+}}
+
+.soft-panel {{
+    background: rgba(122, 78, 36, 0.08);
+    border: 1px solid rgba(122, 78, 36, 0.15);
+    border-radius: 18px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
 }}
 
 /* ── SECTION TITLE ── */
@@ -153,7 +163,14 @@ html, body, [class*="css"] {{
     padding: 0.46rem 0.7rem !important;
     text-align: center !important;
     width: 100% !important;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
+    transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s,
+    transform 0.15s; !important;
+    [data-testid="stNumberInput"] input:hover {
+    transform: translateY(-1px);
+}
 }}
 [data-testid="stNumberInput"] input:hover {{
     border-color: rgba(160, 100, 40, 0.6) !important;
@@ -258,13 +275,27 @@ html, body, [class*="css"] {{
 .pill-amber {{ background: rgba(160,110,10,0.1); color: #6a4000; border: 1px solid rgba(160,110,10,0.25); }}
 .pill-sage  {{ background: rgba(30,130,70,0.1);  color: #144a2c; border: 1px solid rgba(30,130,70,0.25); }}
 
+@media (max-width: 640px) {
+    .results-grid {{
+        grid-template-columns: 1fr;
+    }}
+
+    .hero-title {{
+        font-size: 2rem !important;
+    }}
+
+    .res-val {{
+        font-size: 2rem !important;
+    }}
+}
+
 /* ── FOOTER ── */
 .footer {{
     text-align: center;
     padding-top: 1.5rem;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.6rem;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #907050;
     line-height: 1.9;
@@ -279,7 +310,6 @@ def load_models():
     return (
         joblib.load(os.path.join(base, "gpa_model.pkl")),
         joblib.load(os.path.join(base, "burnout_model.pkl")),
-        joblib.load(os.path.join(base, "scaler.pkl")),
     )
 
 @st.cache_data
@@ -322,7 +352,11 @@ if not models_ok:
     st.error(f"Could not load models: {load_err}\n\nMake sure gpa_model.pkl, burnout_model.pkl and scaler.pkl are in your repo root.")
     st.stop()
 
-st.markdown('<div class="section-title">Student Profile</div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="soft-panel">
+<div class="section-title">Student Profile</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Field helper ──────────────────────────────────────────────────────────────
 def field(label, hint, key, mn, mx, step, default):
