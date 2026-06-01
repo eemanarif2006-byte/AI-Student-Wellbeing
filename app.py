@@ -152,7 +152,7 @@ html, body, [class*="css"] {{
 /* ── NUMBER INPUT ── */
 [data-testid="stNumberInput"] {{ width: 100% !important; }}
 [data-testid="stNumberInput"] > div {{ width: 100% !important; }}
-[data-testid="stNumberInput"] input {{
+[data-testid="stNumberInput"] input {
     font-family: 'Cormorant Garamond', serif !important;
     font-size: 1.05rem !important;
     font-weight: 500 !important;
@@ -163,12 +163,13 @@ html, body, [class*="css"] {{
     padding: 0.46rem 0.7rem !important;
     text-align: center !important;
     width: 100% !important;
-    transition:
-    border-color 0.2s,
-    box-shadow 0.2s,
-    background 0.2s,
-    transform 0.15s; !important;
-    [data-testid="stNumberInput"] input:hover {
+    transition: border-color 0.2s,
+                box-shadow 0.2s,
+                background 0.2s,
+                transform 0.15s !important;
+}
+
+[data-testid="stNumberInput"] input:hover {
     transform: translateY(-1px);
 }
 }}
@@ -276,17 +277,17 @@ html, body, [class*="css"] {{
 .pill-sage  {{ background: rgba(30,130,70,0.1);  color: #144a2c; border: 1px solid rgba(30,130,70,0.25); }}
 
 @media (max-width: 640px) {
-    .results-grid {{
+    .results-grid {
         grid-template-columns: 1fr;
-    }}
+    }
 
-    .hero-title {{
+    .hero-title {
         font-size: 2rem !important;
-    }}
+    }
 
-    .res-val {{
+    .res-val {
         font-size: 2rem !important;
-    }}
+    }
 }
 
 /* ── FOOTER ── */
@@ -331,7 +332,7 @@ def load_defaults():
         }
 
 try:
-    gpa_model, burnout_model, scaler = load_models()
+    gpa_model, burnout_model = load_models()
     defaults = load_defaults()
     models_ok = True
 except Exception as e:
@@ -349,7 +350,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 if not models_ok:
-    st.error(f"Could not load models: {load_err}\n\nMake sure gpa_model.pkl, burnout_model.pkl and scaler.pkl are in your repo root.")
+    st.error(f"Could not load models: {load_err}\n\nMake sure gpa_model.pkl and burnout_model.pkl are in your repo root.")
     st.stop()
 
 st.markdown("""
