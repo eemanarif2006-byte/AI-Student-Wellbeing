@@ -287,9 +287,7 @@ html, body, [class*="css"] {{
 
     .res-val {
         font-size: 2rem !important;
-    }
-}
-
+    }}
 /* ── FOOTER ── */
 .footer {{
     text-align: center;
