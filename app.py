@@ -11,295 +11,279 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
  
-st.markdown("""
+BG_URL = "https://i.pinimg.com/1200x/a5/46/76/a546769fcdf6fc7cf863f09804606357.jpg"
+ 
+st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap');
  
-html, body, [class*="css"] {
-    font-family: 'Lato', sans-serif;
-    color: #2d2040;
-}
+*, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
  
-[data-testid="stAppViewContainer"] {
+html, body, [class*="css"] {{
+    font-family: 'DM Sans', sans-serif;
+    color: #3a2a1a;
+}}
+ 
+/* Background */
+[data-testid="stAppViewContainer"] {{
+    background-image: url('{BG_URL}');
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     background-attachment: fixed;
-}
- 
-[data-testid="stAppViewContainer"]::before {
+    min-height: 100vh;
+}}
+[data-testid="stAppViewContainer"]::before {{
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(255,248,252,0.78);
-    backdrop-filter: blur(3px);
+    background: rgba(245, 235, 220, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     z-index: 0;
-}
+}}
+[data-testid="stAppViewContainer"] > section {{
+    position: relative;
+    z-index: 1;
+}}
+[data-testid="stHeader"] {{ background: transparent !important; display: none; }}
+[data-testid="stToolbar"] {{ display: none !important; }}
+#MainMenu, footer {{ visibility: hidden; }}
  
-[data-testid="stAppViewContainer"] > * { position: relative; z-index: 1; }
-[data-testid="stHeader"] { background: transparent !important; }
-[data-testid="stToolbar"] { display: none; }
- 
-/* ── URL INPUT ── */
-.url-wrap {
-    margin: 0 auto 0.5rem;
-    max-width: 560px;
-    text-align: center;
-}
-.url-hint {
-    font-size: 0.72rem;
-    color: #c0a8c8;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 0.4rem;
-    font-family: 'Lato', sans-serif;
-}
+/* Main content width */
+.block-container {{
+    max-width: 580px !important;
+    padding: 0 1.5rem 3rem !important;
+    margin: 0 auto !important;
+}}
  
 /* ── HERO ── */
-.hero-wrap {
+.hero {{
     text-align: center;
-    padding: 2.8rem 1rem 1.6rem;
-}
-.hero-eyebrow {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.68rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: #c4a0c8;
-    margin-bottom: 0.9rem;
-    font-weight: 700;
-}
-.hero-title {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
-    font-size: clamp(2rem, 5.5vw, 3rem);
-    font-weight: 700;
-    line-height: 1.15;
-    color: #2d1a40;
-    margin: 0 0 0.8rem;
-    letter-spacing: -0.01em;
-}
-.hero-title em {
-    font-style: italic;
-    color: #9b5fc4;
-}
-.hero-sub {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.95rem;
-    color: #8a7aa0;
-    font-weight: 300;
-    max-width: 440px;
-    margin: 0 auto;
-    line-height: 1.7;
-}
-.hero-divider {
-    width: 48px;
-    height: 2px;
-    background: linear-gradient(90deg, #d4a8e8, #f0c8d8);
-    margin: 1.4rem auto 0;
-    border-radius: 2px;
-}
- 
-/* ── CARDS ── */
-.glass-card {
-    background: rgba(255,250,255,0.75);
-    border: 1px solid rgba(210,180,230,0.35);
-    border-radius: 20px;
-    padding: 1.5rem 1.8rem;
-    margin-bottom: 1.1rem;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 2px 20px rgba(180,140,210,0.08);
-}
-.card-label {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #c4a0c8;
-    margin-bottom: 1.1rem;
-    font-weight: 700;
-}
- 
-/* ── STEPPER ROW ── */
-.step-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.85rem;
-    gap: 12px;
-}
-.step-meta { flex: 1; }
-.step-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #2d1a40;
-    line-height: 1.3;
-}
-.step-hint {
-    font-size: 0.7rem;
-    color: #c0a8c8;
-    font-weight: 300;
-    margin-top: 1px;
-}
-.step-ctrl {
-    display: flex;
-    align-items: center;
-    background: rgba(220,200,240,0.18);
-    border: 1px solid rgba(200,170,220,0.3);
-    border-radius: 10px;
-    overflow: hidden;
-}
-.s-btn {
-    background: none;
-    border: none;
-    width: 30px;
-    height: 32px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #9b5fc4;
-    cursor: pointer;
-    line-height: 1;
-}
-.s-btn:hover { background: rgba(180,140,210,0.15); }
-.s-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #2d1a40;
-    min-width: 46px;
-    text-align: center;
-}
- 
-/* ── RESULTS ── */
-.result-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.9rem;
-    margin-top: 0.4rem;
-}
-.res-box {
-    background: rgba(255,252,255,0.88);
-    border-radius: 14px;
-    padding: 1rem 0.8rem;
-    text-align: center;
-    border: 1px solid rgba(210,180,230,0.3);
-}
-.res-lbl {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #c4a0c8;
-    font-weight: 700;
-    margin-bottom: 0.35rem;
-}
-.res-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2d1a40;
-    line-height: 1;
-}
-.burnout-high   { color: #c44a5a !important; }
-.burnout-medium { color: #b07020 !important; }
-.burnout-low    { color: #3a8e6a !important; }
- 
-.pill {
+    padding: 3.5rem 0 2rem;
+}}
+.hero-tag {{
     display: inline-block;
-    padding: 0.18rem 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #b07850;
+    background: rgba(210,175,140,0.2);
+    border: 1px solid rgba(180,140,100,0.3);
+    padding: 0.3rem 1rem;
     border-radius: 999px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    margin-top: 0.4rem;
-    letter-spacing: 0.05em;
-    font-family: 'Lato', sans-serif;
-}
-.pill-green  { background: #eaf7f0; color: #1a6e45; border: 1px solid #c0e8d4; }
-.pill-yellow { background: #fef9ec; color: #7a5000; border: 1px solid #f0dfa0; }
-.pill-red    { background: #fceef0; color: #8e2233; border: 1px solid #f0c0c8; }
+    margin-bottom: 1.2rem;
+}}
+.hero-title {{
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.12;
+    color: #2a1a0a;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.9rem;
+}}
+.hero-title em {{
+    font-style: italic;
+    color: #c4785a;
+}}
+.hero-sub {{
+    font-size: 0.9rem;
+    color: #7a6050;
+    font-weight: 300;
+    line-height: 1.75;
+    max-width: 380px;
+    margin: 0 auto;
+}}
+.hero-rule {{
+    width: 40px;
+    height: 1.5px;
+    background: linear-gradient(90deg, #d4a882, #e8c4a8);
+    margin: 1.6rem auto 0;
+    border-radius: 2px;
+}}
  
-/* ── BUTTON ── */
-.stButton > button {
-    background: linear-gradient(135deg, #c49ad8, #e8b4d0) !important;
-    color: #2d1a40 !important;
+/* ── CARD ── */
+.card {{
+    background: rgba(255, 250, 243, 0.78);
+    border: 1px solid rgba(200, 170, 130, 0.28);
+    border-radius: 18px;
+    padding: 1.6rem 1.6rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    transition: box-shadow 0.25s ease;
+}}
+.card:hover {{
+    box-shadow: 0 6px 28px rgba(180,130,90,0.12);
+}}
+.card-title {{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #c4a07a;
+    margin-bottom: 1.4rem;
+}}
+ 
+/* ── FIELD ROW ── */
+.field-label {{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #2a1a0a;
+    line-height: 1;
+    margin-bottom: 1px;
+}}
+.field-hint {{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    color: #b09070;
+    font-weight: 300;
+    margin-bottom: 0.55rem;
+}}
+.field-sep {{
+    height: 1px;
+    background: rgba(200,170,130,0.18);
+    margin: 0.9rem 0;
+}}
+ 
+/* Override Streamlit number input */
+[data-testid="stNumberInput"] {{
+    width: 100% !important;
+}}
+[data-testid="stNumberInput"] > div {{
+    width: 100% !important;
+}}
+[data-testid="stNumberInput"] input {{
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 500 !important;
+    color: #2a1a0a !important;
+    background: rgba(255,248,238,0.7) !important;
+    border: 1px solid rgba(200,170,130,0.35) !important;
+    border-radius: 10px !important;
+    padding: 0.5rem 0.75rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    width: 100% !important;
+    text-align: center !important;
+}}
+[data-testid="stNumberInput"] input:focus,
+[data-testid="stNumberInput"] input:hover {{
+    border-color: rgba(180,120,80,0.55) !important;
+    box-shadow: 0 0 0 3px rgba(200,150,100,0.12) !important;
+    outline: none !important;
+}}
+[data-testid="stNumberInput"] button {{
+    background: rgba(220,190,155,0.25) !important;
+    border: 1px solid rgba(200,170,130,0.3) !important;
+    color: #b07850 !important;
+    border-radius: 8px !important;
+    transition: background 0.18s, transform 0.12s !important;
+    font-size: 1rem !important;
+}}
+[data-testid="stNumberInput"] button:hover {{
+    background: rgba(200,160,110,0.38) !important;
+    transform: scale(1.08) !important;
+}}
+[data-testid="stNumberInput"] label {{ display: none !important; }}
+ 
+/* ── PREDICT BUTTON ── */
+.stButton > button {{
+    width: 100% !important;
+    background: linear-gradient(135deg, #d4956a, #e8b490) !important;
+    color: #fff8f0 !important;
     border: none !important;
     border-radius: 12px !important;
-    font-family: 'Playfair Display', serif !important;
-    font-size: 0.92rem !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.05rem !important;
     font-weight: 600 !important;
-    letter-spacing: 0.03em !important;
-    padding: 0.7rem 2rem !important;
-    width: 100% !important;
-    box-shadow: 0 3px 14px rgba(180,140,210,0.28) !important;
-    transition: opacity 0.2s !important;
-}
-.stButton > button:hover { opacity: 0.88 !important; }
+    letter-spacing: 0.04em !important;
+    padding: 0.75rem 1rem !important;
+    box-shadow: 0 3px 16px rgba(180,110,70,0.25) !important;
+    transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s !important;
+    cursor: pointer !important;
+}}
+.stButton > button:hover {{
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 22px rgba(180,110,70,0.32) !important;
+    opacity: 0.95 !important;
+}}
+.stButton > button:active {{
+    transform: translateY(0px) !important;
+}}
  
-/* number input styling */
-[data-testid="stNumberInput"] input {
-    font-family: 'Playfair Display', serif !important;
-    font-size: 0.88rem !important;
-    color: #2d1a40 !important;
-    border-color: rgba(200,170,220,0.4) !important;
-    border-radius: 8px !important;
-    background: rgba(255,252,255,0.8) !important;
-}
-[data-testid="stNumberInput"] label {
-    font-family: 'Playfair Display', serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 600 !important;
-    color: #2d1a40 !important;
-}
- 
-.stTextInput input {
-    font-family: 'Lato', sans-serif !important;
-    font-size: 0.84rem !important;
-    border-radius: 10px !important;
-    border-color: rgba(200,170,220,0.4) !important;
-    background: rgba(255,252,255,0.8) !important;
-    color: #2d1a40 !important;
-}
-.stTextInput label { display: none; }
- 
-hr { border-color: rgba(210,180,230,0.25) !important; }
-.footer-txt {
+/* ── RESULTS ── */
+.results-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-top: 0.4rem;
+}}
+.res-box {{
+    background: rgba(255,248,238,0.85);
+    border: 1px solid rgba(200,170,130,0.25);
+    border-radius: 14px;
+    padding: 1.1rem 0.8rem 0.9rem;
     text-align: center;
-    font-size: 0.68rem;
-    color: #c4b0d0;
-    letter-spacing: 0.08em;
-    padding-bottom: 2rem;
-    font-family: 'Lato', sans-serif;
+    transition: transform 0.2s, box-shadow 0.2s;
+}}
+.res-box:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(180,130,90,0.13);
+}}
+.res-lbl {{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-}
+    color: #c4a07a;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}}
+.res-val {{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #2a1a0a;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+}}
+.res-val.high   {{ color: #b84040; }}
+.res-val.medium {{ color: #b07830; }}
+.res-val.low    {{ color: #3a8060; }}
  
-#MainMenu, footer { visibility: hidden; }
+.pill {{
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 0.18rem 0.7rem;
+    border-radius: 999px;
+}}
+.pill-rose   {{ background: #fceef0; color: #8e3040; border: 1px solid #f0c8cc; }}
+.pill-amber  {{ background: #fef6e8; color: #7a5010; border: 1px solid #f0ddb0; }}
+.pill-sage   {{ background: #eef5f0; color: #2a6845; border: 1px solid #b8ddc8; }}
+ 
+/* ── FOOTER ── */
+.footer {{
+    text-align: center;
+    padding: 1rem 0 2.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #c4a888;
+}}
+.footer-rule {{
+    height: 1px;
+    background: rgba(200,170,130,0.2);
+    margin-bottom: 1.2rem;
+}}
 </style>
-""", unsafe_allow_html=True)
- 
-# ── Background URL input ──────────────────────────────────────────────────────
-if "bg_url" not in st.session_state:
-    st.session_state.bg_url = ""
- 
-st.markdown('<div class="url-wrap"><div class="url-hint">✦ Paste a background image URL (Pinterest, Unsplash, etc.)</div></div>', unsafe_allow_html=True)
-bg_url_input = st.text_input("bg", value=st.session_state.bg_url, placeholder="https://i.pinimg.com/...")
-if bg_url_input != st.session_state.bg_url:
-    st.session_state.bg_url = bg_url_input
- 
-if st.session_state.bg_url.strip():
-    st.markdown(f"""
-    <style>
-    [data-testid="stAppViewContainer"] {{
-        background-image: url('{st.session_state.bg_url.strip()}');
-    }}
-    </style>
-    """, unsafe_allow_html=True)
- 
-# ── Hero ──────────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="hero-wrap">
-  <div class="hero-eyebrow">✦ &nbsp; BSAI · AI130 · Semester 2 &nbsp; ✦</div>
-  <h1 class="hero-title">Know Your <em>Academic</em><br>Future, Now.</h1>
-  <p class="hero-sub">Enter your study habits and let our machine learning models predict your GPA & burnout risk — trained on 50,000 student records.</p>
-  <div class="hero-divider"></div>
-</div>
 """, unsafe_allow_html=True)
  
 # ── Load models ───────────────────────────────────────────────────────────────
@@ -326,63 +310,57 @@ except Exception as e:
     models_ok = False
     load_err = str(e)
  
+# ── Hero ──────────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="hero">
+  <div class="hero-tag">BSAI &nbsp;·&nbsp; AI130 &nbsp;·&nbsp; Semester 2</div>
+  <h1 class="hero-title">Know Your <em>Academic</em><br>Future, Now.</h1>
+  <p class="hero-sub">Enter your study habits and let our machine learning models predict your GPA and burnout risk — trained on 50,000 student records.</p>
+  <div class="hero-rule"></div>
+</div>
+""", unsafe_allow_html=True)
+ 
 if not models_ok:
-    st.error(f"Could not load models: {load_err}")
+    st.error(f"Could not load models. Make sure gpa_model.pkl, burnout_model.pkl, scaler.pkl and cleaned_students_data.csv are in the same folder as app.py.\n\n{load_err}")
     st.stop()
  
-# ── Stepper + number_input combo ─────────────────────────────────────────────
-def field(label, hint, key, mn, mx, step, default):
+# ── Input helper ──────────────────────────────────────────────────────────────
+def input_field(label, hint, key, mn, mx, step, default):
     if key not in st.session_state:
         st.session_state[key] = float(default)
+    st.markdown(f'<div class="field-label">{label}</div><div class="field-hint">{hint}</div>', unsafe_allow_html=True)
+    fmt = "%.1f" if step < 1 else "%.0f"
+    val = st.number_input(
+        label, label_visibility="collapsed",
+        min_value=float(mn), max_value=float(mx),
+        value=float(st.session_state[key]),
+        step=float(step), key=f"{key}_num", format=fmt,
+    )
+    st.session_state[key] = val
+    return val
  
-    # Label + hint
-    st.markdown(f"""
-    <div class="step-row" style="margin-bottom:4px;">
-      <div class="step-meta">
-        <div class="step-name">{label}</div>
-        <div class="step-hint">{hint}</div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+# ── Profile card ──────────────────────────────────────────────────────────────
+st.markdown('<div class="card"><div class="card-title">Student Profile</div>', unsafe_allow_html=True)
  
-    col_m, col_n, col_p = st.columns([0.12, 0.76, 0.12])
-    with col_m:
-        if st.button("−", key=f"{key}_m"):
-            st.session_state[key] = round(max(mn, st.session_state[key] - step), 4)
-    with col_n:
-        val = st.number_input(
-            label, label_visibility="collapsed",
-            min_value=float(mn), max_value=float(mx),
-            value=float(st.session_state[key]),
-            step=float(step), key=f"{key}_num",
-            format="%.2f" if step < 1 else "%.0f",
-        )
-        st.session_state[key] = val
-    with col_p:
-        if st.button("+", key=f"{key}_p"):
-            st.session_state[key] = round(min(mx, st.session_state[key] + step), 4)
+pre_gpa   = input_field("Pre-Semester GPA",        "Scale: 0.0 – 4.0",              "pre_gpa",   0.0,  4.0,  0.1, round(defaults.get("Pre_Semester_GPA", 2.5), 1))
+st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
+weekly_ai = input_field("Weekly GenAI Hours",       "Hours per week using AI tools", "weekly_ai", 0.0, 40.0,  0.5, round(defaults.get("Weekly_GenAI_Hours", 5.0), 1))
+st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
+trad_hrs  = input_field("Traditional Study Hours",  "Hours per week without AI",     "trad_hrs",  0.0, 60.0,  0.5, round(defaults.get("Traditional_Study_Hours", 15.0), 1))
+st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
+anxiety   = input_field("Exam Anxiety Level",       "1 = very calm   —   10 = extreme", "anxiety", 1.0, 10.0, 1.0, float(int(round(defaults.get("Anxiety_Level_During_Exams", 5)))))
+st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
+skill_ret = input_field("Skill Retention Score",    "0 = poor   —   100 = excellent","skill_ret", 0.0,100.0,  1.0, round(defaults.get("Skill_Retention_Score", 60.0), 1))
  
-    st.markdown("<div style='margin-bottom:0.5rem;'></div>", unsafe_allow_html=True)
-    return st.session_state[key]
- 
-# ── Input card ────────────────────────────────────────────────────────────────
-st.markdown('<div class="glass-card"><div class="card-label">✦ Your Student Profile</div>', unsafe_allow_html=True)
- 
-pre_gpa   = field("Pre-Semester GPA",          "0.0 – 4.0",                "pre_gpa",  0.0,  4.0,  0.1, round(defaults.get("Pre_Semester_GPA", 2.5), 1))
-weekly_ai = field("Weekly GenAI Hours",         "Hours/week using AI tools","weekly_ai",0.0, 40.0,  0.5, round(defaults.get("Weekly_GenAI_Hours", 5.0), 1))
-trad_hrs  = field("Traditional Study Hours",    "Hours/week without AI",    "trad_hrs", 0.0, 60.0,  0.5, round(defaults.get("Traditional_Study_Hours", 15.0), 1))
-anxiety   = field("Exam Anxiety Level",         "1 = calm · 10 = extreme",  "anxiety",  1.0, 10.0,  1.0, float(int(round(defaults.get("Anxiety_Level_During_Exams", 5)))))
-skill_ret = field("Skill Retention Score",      "0 = poor · 100 = great",   "skill_ret",0.0,100.0,  1.0, round(defaults.get("Skill_Retention_Score", 60.0), 1))
- 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
  
 # ── Predict ───────────────────────────────────────────────────────────────────
-BURNOUT_LABELS = {0: "High", 1: "Low", 2: "Medium"}
-BURNOUT_COLOR  = {"High": "burnout-high", "Medium": "burnout-medium", "Low": "burnout-low"}
-BURNOUT_PILL   = {"High": "pill-red",     "Medium": "pill-yellow",    "Low": "pill-green"}
-BURNOUT_EMOJI  = {"High": "↑ High",       "Medium": "~ Medium",       "Low": "↓ Low"}
+BURNOUT_MAP   = {0: "High",   1: "Low",    2: "Medium"}
+BURNOUT_CLASS = {"High": "high", "Medium": "medium", "Low": "low"}
+BURNOUT_PILL  = {"High": "pill-rose", "Medium": "pill-amber", "Low": "pill-sage"}
+BURNOUT_TEXT  = {"High": "High Risk", "Medium": "Moderate", "Low": "Low Risk"}
  
-if st.button("✦ Predict My GPA & Burnout Risk"):
+if st.button("Predict GPA & Burnout Risk"):
     inp = dict(defaults)
     inp.pop("Post_Semester_GPA", None)
     inp.pop("Burnout_Risk_Level", None)
@@ -393,25 +371,24 @@ if st.button("✦ Predict My GPA & Burnout Risk"):
     inp["Skill_Retention_Score"]       = skill_ret
  
     df_in = pd.DataFrame([inp])
- 
     pred_gpa     = gpa_model.predict(df_in)[0]
     burnout_code = int(burnout_model.predict(df_in)[0])
-    b_label      = BURNOUT_LABELS[burnout_code]
-    b_color      = BURNOUT_COLOR[b_label]
+    b_label      = BURNOUT_MAP[burnout_code]
+    b_class      = BURNOUT_CLASS[b_label]
     b_pill       = BURNOUT_PILL[b_label]
-    b_emoji      = BURNOUT_EMOJI[b_label]
+    b_text       = BURNOUT_TEXT[b_label]
  
     if pred_gpa >= 3.5:
-        g_pill, g_txt = "pill-green",  "Excellent"
+        g_pill, g_txt = "pill-sage",  "Excellent"
     elif pred_gpa >= 2.5:
-        g_pill, g_txt = "pill-yellow", "On Track"
+        g_pill, g_txt = "pill-amber", "On Track"
     else:
-        g_pill, g_txt = "pill-red",    "Needs Attention"
+        g_pill, g_txt = "pill-rose",  "Needs Attention"
  
     st.markdown(f"""
-    <div class="glass-card" style="margin-top:0.3rem;">
-      <div class="card-label">✦ Results</div>
-      <div class="result-row">
+    <div class="card" style="margin-top:0.6rem;">
+      <div class="card-title">Results</div>
+      <div class="results-grid">
         <div class="res-box">
           <div class="res-lbl">Predicted GPA</div>
           <div class="res-val">{pred_gpa:.2f}</div>
@@ -419,17 +396,18 @@ if st.button("✦ Predict My GPA & Burnout Risk"):
         </div>
         <div class="res-box">
           <div class="res-lbl">Burnout Risk</div>
-          <div class="res-val {b_color}">{b_label}</div>
-          <span class="pill {b_pill}">{b_emoji}</span>
+          <div class="res-val {b_class}">{b_label}</div>
+          <span class="pill {b_pill}">{b_text}</span>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
  
 # ── Footer ────────────────────────────────────────────────────────────────────
-st.markdown("---")
-st.markdown(
-    '<p class="footer-txt">StudyPulse &nbsp;·&nbsp; BSAI Semester 2 &nbsp;·&nbsp; AI130 Programming for AI<br>'
-    'Zainab Qasim &nbsp;·&nbsp; Eeman Arif &nbsp;·&nbsp; Khizran Fatima</p>',
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<div class="footer">
+  <div class="footer-rule"></div>
+  StudyPulse &nbsp;·&nbsp; BSAI Semester 2 &nbsp;·&nbsp; AI130 Programming for AI<br>
+  Zainab Qasim &nbsp;·&nbsp; Eeman Arif &nbsp;·&nbsp; Khizran Fatima
+</div>
+""", unsafe_allow_html=True)
