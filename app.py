@@ -152,7 +152,7 @@ html, body, [class*="css"] {{
 /* ── NUMBER INPUT ── */
 [data-testid="stNumberInput"] {{ width: 100% !important; }}
 [data-testid="stNumberInput"] > div {{ width: 100% !important; }}
-[data-testid="stNumberInput"] input {
+[data-testid="stNumberInput"] input {{
     font-family: 'Cormorant Garamond', serif !important;
     font-size: 1.05rem !important;
     font-weight: 500 !important;
@@ -167,11 +167,10 @@ html, body, [class*="css"] {{
                 box-shadow 0.2s,
                 background 0.2s,
                 transform 0.15s !important;
-}
+}}
 
-[data-testid="stNumberInput"] input:hover {
+[data-testid="stNumberInput"] input:hover {{
     transform: translateY(-1px);
-}
 }}
 [data-testid="stNumberInput"] input:hover {{
     border-color: rgba(160, 100, 40, 0.6) !important;
@@ -276,18 +275,19 @@ html, body, [class*="css"] {{
 .pill-amber {{ background: rgba(160,110,10,0.1); color: #6a4000; border: 1px solid rgba(160,110,10,0.25); }}
 .pill-sage  {{ background: rgba(30,130,70,0.1);  color: #144a2c; border: 1px solid rgba(30,130,70,0.25); }}
 
-@media (max-width: 640px) {
-    .results-grid {
+@media (max-width: 640px) {{
+    .results-grid {{
         grid-template-columns: 1fr;
-    }
+    }}
 
-    .hero-title {
-        font-size: 2rem !important;
-    }
-
-    .res-val {
+    .hero-title {{
         font-size: 2rem !important;
     }}
+
+    .res-val {{
+        font-size: 2rem !important;
+    }}
+}}
 /* ── FOOTER ── */
 .footer {{
     text-align: center;
