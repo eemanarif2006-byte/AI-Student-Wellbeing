@@ -435,7 +435,7 @@ st.markdown(
     .field-label {
         font-weight: 800 !important;
         font-size: 16px;
-        color: inherit; /* keeps your theme color unchanged */
+        color: #7B3F00;
     }
 
     .field-hint {
