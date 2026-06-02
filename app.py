@@ -318,20 +318,27 @@ def load_models():
 def load_defaults():
     base = os.path.dirname(__file__)
     path = os.path.join(base, "cleaned_students_data.csv")
-    try:
-        df = pd.read_csv(path)
-        if df.empty or len(df.columns) == 0:
-            raise ValueError("empty")
-        return df.drop(columns=["Post_Semester_GPA","Burnout_Risk_Level"], errors="ignore").mean().to_dict()
-    except Exception:
-        return {
-            "Pre_Semester_GPA": 2.5,
-            "Weekly_GenAI_Hours": 5.0,
-            "Traditional_Study_Hours": 15.0,
-            "Anxiety_Level_During_Exams": 5.0,
-            "Skill_Retention_Score": 60.0,
-        }
+   try:
+    df = pd.read_csv(path)
 
+    features = [
+        "Pre_Semester_GPA",
+        "Weekly_GenAI_Hours",
+        "Traditional_Study_Hours",
+        "Anxiety_Level_During_Exams",
+        "Skill_Retention_Score"
+    ]
+
+    return df[features].mean().to_dict()
+
+except Exception:
+    return {
+        "Pre_Semester_GPA": 2.5,
+        "Weekly_GenAI_Hours": 5.0,
+        "Traditional_Study_Hours": 15.0,
+        "Anxiety_Level_During_Exams": 5.0,
+        "Skill_Retention_Score": 60.0,
+    }
 try:
     gpa_model, burnout_model = load_models()
     defaults = load_defaults()
