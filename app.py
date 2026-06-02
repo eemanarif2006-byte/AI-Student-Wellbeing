@@ -79,9 +79,10 @@ html, body, [class*="css"] {{
     font-size: clamp(1.9rem, 5vw, 2.9rem);
     font-weight: 600;
     line-height: 1.13;
-    color: #201005;
+    color: #2B1408 !important;
     letter-spacing: -0.01em;
     margin-bottom: 0.8rem;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.25);
 }}
 .hero-title em {{
     font-style: italic;
