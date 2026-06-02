@@ -435,29 +435,23 @@ st.markdown(
     .field-label {
         font-weight: 800 !important;
         font-size: 16px;
-        color: #ffffff;
+        color: inherit; /* keeps your theme color unchanged */
     }
 
     .field-hint {
         font-size: 12px;
-        color: #aaaaaa;
+        opacity: 0.7; /* subtle, still dark-theme friendly */
     }
 
-    /* Make number input text bolder too */
+    /* Make input text slightly stronger but still dark-theme safe */
     .stNumberInput input {
         font-weight: 600 !important;
         font-size: 15px;
-    }
-
-    /* Optional: make whole app text slightly stronger */
-    html, body, [class*="css"]  {
-        font-weight: 500;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 # ── Predict ───────────────────────────────────────────────────────────────────
 BURNOUT_MAP   = {0: "High",   1: "Low",    2: "Medium"}
 BURNOUT_CLASS = {"High": "high", "Medium": "medium", "Low": "low"}
