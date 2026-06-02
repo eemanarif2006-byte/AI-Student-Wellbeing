@@ -309,6 +309,8 @@ def load_models():
     base = os.path.dirname(__file__)
     return (
         joblib.load(os.path.join(base, "gpa_model.pkl")),
+        st.write("Expected Features:")
+        st.write(gpa_model.feature_names_in_)
         joblib.load(os.path.join(base, "burnout_model.pkl")),
     )
 
