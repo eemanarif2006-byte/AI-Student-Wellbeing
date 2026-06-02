@@ -309,8 +309,6 @@ def load_models():
     base = os.path.dirname(__file__)
     return (
         joblib.load(os.path.join(base, "gpa_model.pkl")),
-        st.write("Expected Features:")
-        st.write(list(gpa_model.feature_names_in_))
         joblib.load(os.path.join(base, "burnout_model.pkl")),
     )
 
@@ -318,7 +316,7 @@ def load_models():
 def load_defaults():
     base = os.path.dirname(__file__)
     path = os.path.join(base, "cleaned_students_data.csv")
-   try:
+    try:
     df = pd.read_csv(path)
 
     features = [
@@ -346,6 +344,8 @@ try:
 except Exception as e:
     models_ok = False
     load_err = str(e)
+st.write("Expected Features:")
+st.write(list(gpa_model.feature_names_in_))
 
 # ── HERO ─────────────────────────────────────────────────────────────────────
 st.markdown("""
