@@ -398,20 +398,21 @@ BURNOUT_PILL  = {"High": "pill-rose", "Medium": "pill-amber", "Low": "pill-sage"
 BURNOUT_TEXT  = {"High": "High Risk", "Medium": "Moderate",   "Low": "Low Risk"}
 
 if st.button("Predict GPA & Burnout Risk"):
-    inp = dict(defaults)
-    inp.pop("Post_Semester_GPA", None)
-    inp.pop("Burnout_Risk_Level", None)
-    inp.update({
-        "Pre_Semester_GPA":           pre_gpa,
-        "Weekly_GenAI_Hours":          weekly_ai,
-        "Traditional_Study_Hours":     trad_hrs,
-        "Anxiety_Level_During_Exams":  float(anxiety),
-        "Skill_Retention_Score":       skill_ret,
-    })
-    df_in        = pd.DataFrame([inp])
-    pred_gpa     = gpa_model.predict(df_in)[0]
+
+    inp = {
+        "Pre_Semester_GPA": pre_gpa,
+        "Weekly_GenAI_Hours": weekly_ai,
+        "Traditional_Study_Hours": trad_hrs,
+        "Anxiety_Level_During_Exams": float(anxiety),
+        "Skill_Retention_Score": skill_ret
+    }
+
+    df_in = pd.DataFrame([inp])
+
+    pred_gpa = gpa_model.predict(df_in)[0]
     burnout_code = int(burnout_model.predict(df_in)[0])
-    b_label      = BURNOUT_MAP[burnout_code]
+
+    b_label = BURNOUT_MAP[burnout_code]
 
     g_pill, g_txt = (
         ("pill-sage",  "Excellent")       if pred_gpa >= 3.5 else
