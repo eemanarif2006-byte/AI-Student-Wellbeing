@@ -370,32 +370,64 @@ st.markdown("""
 
 # ── Field helper ──────────────────────────────────────────────────────────────
 def field(label, hint, key, mn, mx, step, default):
+
+    # keep session state (GOOD IDEA — we keep it)
     if key not in st.session_state:
         st.session_state[key] = float(default)
+
     st.markdown(
         f'<span class="field-label">{label}</span>'
         f'<span class="field-hint">{hint}</span>',
         unsafe_allow_html=True,
     )
+
+    #SAFE DEFAULT CLAMPING (this fixes your crashes)
+    safe_default = float(st.session_state[key])
+    safe_default = max(float(mn), min(float(mx), safe_default))
+
     val = st.number_input(
-        label, label_visibility="collapsed",
-        min_value=float(mn), max_value=float(mx),
-        value=float(st.session_state[key]),
-        step=float(step), key=f"{key}_num",
+        label,
+        label_visibility="collapsed",
+        min_value=float(mn),
+        max_value=float(mx),
+        value=safe_default,
+        step=float(step),
+        key=f"{key}_num",
         format="%.1f" if step < 1 else "%.0f",
     )
+
     st.session_state[key] = val
     return val
 
-pre_gpa   = field("Pre-Semester GPA",       "0.0 – 4.0",                     "pre_gpa",   0.0,  4.0, 0.1, round(defaults.get("Pre_Semester_GPA", 2.5), 1))
-st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
-weekly_ai = field("Weekly GenAI Hours",      "Hours per week using AI tools",  "weekly_ai", 0.0, 40.0, 0.5, round(defaults.get("Weekly_GenAI_Hours", 5.0), 1))
-st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
-trad_hrs  = field("Traditional Study Hours", "Hours per week without AI",      "trad_hrs",  0.0, 60.0, 0.5, round(defaults.get("Traditional_Study_Hours", 15.0), 1))
-st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
-anxiety   = field("Exam Anxiety Level",      "1 = very calm  —  10 = extreme", "anxiety",   1.0, 10.0, 1.0, float(int(round(defaults.get("Anxiety_Level_During_Exams", 5)))))
-st.markdown('<div class="field-sep"></div>', unsafe_allow_html=True)
-skill_ret = field("Skill Retention Score",   "0 = poor  —  100 = excellent",   "skill_ret", 0.0,100.0, 1.0, round(defaults.get("Skill_Retention_Score", 60.0), 1))
+pre_gpa = field(
+    "Pre-Semester GPA", "0–4 scale", "pre_gpa",
+    0.0, 4.0, 0.1,
+    defaults.get("Pre_Semester_GPA", 2.5)
+)
+
+weekly_ai = field(
+    "Weekly GenAI Hours", "AI usage per week", "weekly_ai",
+    0.0, 40.0, 0.5,
+    defaults.get("Weekly_GenAI_Hours", 5.0)
+)
+
+trad_hrs = field(
+    "Traditional Study Hours", "Non-AI study time", "trad_hrs",
+    0.0, 60.0, 0.5,
+    defaults.get("Traditional_Study_Hours", 15.0)
+)
+
+anxiety = field(
+    "Exam Anxiety Level", "1 (calm) → 10 (panic)", "anxiety",
+    1.0, 10.0, 1.0,
+    defaults.get("Anxiety_Level_During_Exams", 5.0)
+)
+
+skill_ret = field(
+    "Skill Retention Score", "0–100", "skill_ret",
+    0.0, 100.0, 1.0,
+    defaults.get("Skill_Retention_Score", 60.0)
+)
 
 st.markdown('<div class="inner-sep"></div>', unsafe_allow_html=True)
 
