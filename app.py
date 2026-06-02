@@ -429,28 +429,34 @@ skill_ret = field(
     defaults.get("Skill_Retention_Score", 60.0)
 )
 
-if st.button("Predict GPA & Burnout Risk"):
-
-    df_in = pd.DataFrame([{
-        "Pre_Semester_GPA": pre_gpa,
-        "Weekly_GenAI_Hours": weekly_ai,
-        "Traditional_Study_Hours": trad_hrs,
-        "Anxiety_Level_During_Exams": anxiety,
-        "Skill_Retention_Score": skill_ret
-    }])
-
-    pred_gpa = gpa_model.predict(df_in)[0]
-    burnout_code = int(burnout_model.predict(df_in)[0])
-
-    BURNOUT_MAP = {
-        0: "High",
-        1: "Low",
-        2: "Medium"
+st.markdown(
+    """
+    <style>
+    .field-label {
+        font-weight: 800 !important;
+        font-size: 16px;
+        color: #ffffff;
     }
 
-    st.subheader("📊 Results")
-    st.write("Predicted GPA:", round(pred_gpa, 2))
-    st.write("Burnout Risk:", BURNOUT_MAP.get(burnout_code, "Unknown"))
+    .field-hint {
+        font-size: 12px;
+        color: #aaaaaa;
+    }
+
+    /* Make number input text bolder too */
+    .stNumberInput input {
+        font-weight: 600 !important;
+        font-size: 15px;
+    }
+
+    /* Optional: make whole app text slightly stronger */
+    html, body, [class*="css"]  {
+        font-weight: 500;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # ── Predict ───────────────────────────────────────────────────────────────────
 BURNOUT_MAP   = {0: "High",   1: "Low",    2: "Medium"}
